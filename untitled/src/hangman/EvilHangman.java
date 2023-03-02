@@ -6,7 +6,7 @@ import java.util.*;
 
 
 public class EvilHangman {
-    public static void main(String[] args) throws EmptyDictionaryException, IOException, GuessAlreadyMadeException {
+    public static void main(String[] args) throws EmptyDictionaryException, IOException, GuessAlreadyMadeException, EmptyGuessException {
         EvilHangmanGame userHangmanGame = new EvilHangmanGame();
 
         //set up the variables and files and scanners for input for character
@@ -31,21 +31,32 @@ public class EvilHangman {
             System.out.println("Used letters: " + userHangmanGame.getGuessedLetters().toString());
             System.out.println("Word: " + userHangmanGame.getCurrentWord());
             System.out.println("Enter a guess: ");
-            String userGuess = inputScanner.next().toLowerCase();
+            String userGuess = inputScanner.nextLine().toLowerCase();
+            if(userGuess.isEmpty()){
+                throw new EmptyGuessException();
+            }
+            //skips the correct parts of code.
+            //track where everything is getting thrown from.
+                //everything else
+
             char userGuessChar = userGuess.charAt(0);
 
-            //invalid guess
-            while(userGuess.length() > 1 || userGuess.equals("\n") || !Character.isLetter(userGuessChar) || usedGuesses.contains(userGuess)){
-                if (usedGuesses.contains(userGuess)){
-                    System.out.println("Guess already made! Enter guess: ");
-                    userGuess = inputScanner.next().toLowerCase();
-                    userGuessChar = userGuess.charAt(0);
-                    throw new GuessAlreadyMadeException("Guess already made! Enter guess: ");
 
+
+            //invalid guess
+            // use a try catch with exception to handle what is going on.
+            while(userGuess.length() > 1 || !Character.isLetter(userGuessChar) || usedGuesses.contains(userGuess)){
+                if (usedGuesses.contains(userGuess)){
+                    userHangmanGame.makeGuess(userGuessChar);
+                    System.out.println("Guess already made! Enter guess: ");
+                    userGuess = inputScanner.nextLine().toLowerCase();
+                    userGuessChar = userGuess.charAt(0);
+                    throw new GuessAlreadyMadeException();
+                    //throw empty guess exception.
                 }
                 else {
                     System.out.println("Invalid input! Enter guess: ");
-                    userGuess = inputScanner.next().toLowerCase();
+                    userGuess = inputScanner.nextLine().toLowerCase();
                     userGuessChar = userGuess.charAt(0);
                 }
             }

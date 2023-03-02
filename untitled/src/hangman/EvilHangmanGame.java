@@ -29,15 +29,19 @@ public class EvilHangmanGame extends SubsetKey implements IEvilHangmanGame {
     public void startGame(File dictionary, int wordLength) throws IOException, EmptyDictionaryException {
       // plan: In the make guess section partition through the sets and try and figure out the sets to keep etc. You should have all the info you need in all of the classes now.
         Scanner dScanner = new Scanner(dictionary);
-        if(dScanner.hasNextLine() == false){
+        word_set = new HashSet<>();
+        if(dScanner.hasNext() == false){
           throw new EmptyDictionaryException();
         }
-        while(dScanner.hasNextLine()){
-          String potentialWord = dScanner.nextLine();
+        while(dScanner.hasNext()){
+          String potentialWord = dScanner.next();
           if(potentialWord.length() == wordLength){
             word_set.add(potentialWord);
 
           }
+        }
+        if(word_set.isEmpty()){
+          throw new EmptyDictionaryException();
         }
         emptyWord = createEmptyWord(wordLength);
         currentWord = emptyWord;
@@ -60,8 +64,17 @@ public class EvilHangmanGame extends SubsetKey implements IEvilHangmanGame {
 
   @Override
     public Set<String> makeGuess(char guess) throws GuessAlreadyMadeException {
-      usedGuesses.add(guess);
+    guess = Character.toLowerCase(guess);
+    if (usedGuesses.contains(guess)){
+
+      //throw empty exception
+      throw new GuessAlreadyMadeException();
+    }
+    usedGuesses.add(guess);
+
       String keyToReturn = null;
+
+
       Map<String,Set<String>>pmap = new HashMap<>();
 
         for (String word:word_set) {
